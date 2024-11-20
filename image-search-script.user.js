@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Image Search Script
 // @namespace   http://tampermonkey.net/
-// @version     1.1.0
+// @version     1.1.2
 // @description Quickly access an intuitive and visually pleasing image search menu with a long right-click on any image.
 // @description:zh-TW 長按滑鼠右鍵，快速呼叫圖片搜尋選單，提供簡潔流暢的使用體驗。
 // @description:zh-CN 长按滑鼠右键，快速呼叫图片搜寻选单，提供简洁流畅的使用体验。
@@ -25,26 +25,33 @@
 // ==/UserScript==
 
 GM_addStyle(`
+@keyframes fadeIn {
+    0% { opacity: 0; }
+    100% { opacity: 1; }
+}
+@keyframes fadeOut {
+    0% { opacity: 1; }
+    100% { opacity: 0; }
+}
 #image-search-menu {
+    animation: fadeOut 200ms ease-in-out forwards;
     background-color: rgba(0, 0, 0, .75);
     color: rgb(255, 255, 255);
     display: none;
     flex-direction: column;
     font-size: 16px;
-    opacity: 0;
     width: unset;
     min-width: 150px;
     height: unset;
     min-height: unset;
-    transition: opacity 800ms;
     position: fixed;
     top: unset;
     left: unset;
     z-index: 9999;
 }
 #image-search-menu.show {
+    animation: fadeIn 200ms ease-in-out forwards;
     display: flex;
-    opacity: 1;
 }
 .image-search-option {
     cursor: pointer;
@@ -138,7 +145,7 @@ const searchOptions = new Map([
             searchMenu.timer = setTimeout(() => {
                 searchMenu.holding = true;
                 searchMenu.open(event.target);
-            }, 500);
+            }, 100);
         } else {
             if (event.target !== searchMenu.pane && !event.target.classList.contains('image-search-option')) {
                 searchMenu.clear();
