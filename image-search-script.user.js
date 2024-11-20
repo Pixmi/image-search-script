@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Image Search Script
 // @namespace   http://tampermonkey.net/
-// @version     1.0.4
+// @version     1.0.5
 // @description Quickly access an intuitive and visually pleasing image search menu with a long right-click on any image.
 // @description:zh-TW 長按滑鼠右鍵，快速呼叫圖片搜尋選單，提供簡潔流暢的使用體驗。
 // @description:zh-CN 长按滑鼠右键，快速呼叫图片搜寻选单，提供简洁流畅的使用体验。
@@ -101,7 +101,6 @@ const searchOptions = new Map([
     document.addEventListener('mousedown', (event) => {
         searchMenu.holding = false;
         if (event.button === 2 && event.target.nodeName === 'IMG') {
-            while (this.panel.hasChildNodes()) { this.panel.lastChild.remove() };
             searchMenu.timer = setTimeout(() => {
                 searchMenu.holding = true;
                 searchMenu.open(event.target);
@@ -198,6 +197,7 @@ const searchOptions = new Map([
 
         open(target) {
             if (target.nodeName === 'IMG') {
+                while (this.panel.hasChildNodes()) { this.panel.lastChild.remove() };
                 for (const [key, option] of searchOptions) {
                     if (!GM_getValue(key, true)) continue;
                     const item = document.createElement('div');
