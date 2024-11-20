@@ -1,16 +1,16 @@
 // ==UserScript==
 // @name        Image Search Script
 // @namespace   http://tampermonkey.net/
-// @version     1.0.5
+// @version     1.1.0
 // @description Quickly access an intuitive and visually pleasing image search menu with a long right-click on any image.
 // @description:zh-TW 長按滑鼠右鍵，快速呼叫圖片搜尋選單，提供簡潔流暢的使用體驗。
 // @description:zh-CN 长按滑鼠右键，快速呼叫图片搜寻选单，提供简洁流畅的使用体验。
 // @author      Pixmi
 // @homepage    https://github.com/Pixmi/image-search-script
-// @updateURL   https://github.com/Pixmi/image-search-script/raw/refs/heads/main/image-search-script.meta.js
-// @downloadURL https://github.com/Pixmi/image-search-script/raw/refs/heads/main/image-search-script.user.js
+// @updateURL   https://github.com/Pixmi/image-search-script/raw/main/image-search-script.meta.js
+// @downloadURL https://github.com/Pixmi/image-search-script/raw/main/image-search-script.user.js
 // @supportURL  https://github.com/Pixmi/image-search-script/issues
-// @icon        https://raw.githubusercontent.com/Pixmi/image-search-script/refs/heads/main/icon.svg
+// @icon        https://raw.githubusercontent.com/Pixmi/image-search-script/main/icon.svg
 // @match       *://*/*
 // @require     https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @grant       GM_setValue
@@ -36,7 +36,7 @@ GM_addStyle(`
     min-width: 150px;
     height: unset;
     min-height: unset;
-    transition: opacity .5s;
+    transition: opacity 800ms;
     position: fixed;
     top: unset;
     left: unset;
@@ -58,8 +58,8 @@ GM_addStyle(`
     background-color: rgba(255, 255, 255, .3);
 }
 iframe#image-search-setting {
-    width: 300px !important;
-    height: 300px !important;
+    width: 350px !important;
+    height: 500px !important;
 }
 `);
 
@@ -98,6 +98,40 @@ const searchOptions = new Map([
 (function () {
     'use strict';
 
+    const hoverOpen = {
+        enabled: GM_getValue('HOVER_OPEN', false),
+        minWidth: GM_getValue('HOVER_OPEN_MIN_WIDTH', 100),
+        minHeight: GM_getValue('HOVER_OPEN_MIN_HEIGHT', 100)
+    }
+
+    const newTab = (url) => {
+        const tab = document.createElement('a');
+        tab.href = url;
+        tab.dispatchEvent(new MouseEvent('click', {ctrlKey: true, metaKey: true}));
+    }
+
+    const hoverCheck = (event) => {
+        const { target, relatedTarget } = event;
+        if (target.className == 'image-search-option' && relatedTarget == searchMenu.image) {
+            return true;
+        }
+        if (target.tagName === 'IMG' && target.width >= hoverOpen.minWidth && target.height >= hoverOpen.minHeight) {
+            return true;
+        }
+        return false;
+    }
+
+    document.addEventListener('mouseover', (event) => {
+        if (hoverOpen.enabled) {
+            if (hoverCheck(event)) {
+                searchMenu.image = event.relatedTarget;
+                searchMenu.open(event.target);
+            } else {
+                searchMenu.clear();
+            }
+        }
+    });
+
     document.addEventListener('mousedown', (event) => {
         searchMenu.holding = false;
         if (event.button === 2 && event.target.nodeName === 'IMG') {
@@ -134,14 +168,9 @@ const searchOptions = new Map([
             searchMenu.update();
         }
     });
+
     document.addEventListener('scroll', () => { searchMenu.update() });
     window.addEventListener('resize', () => { searchMenu.update() });
-
-    const newTab = (url) => {
-        let tab = document.createElement('a');
-        tab.href = url;
-        tab.dispatchEvent(new MouseEvent('click', {ctrlKey: true, metaKey: true}));
-    }
 
     class searchMenuController {
         constructor() {
@@ -157,7 +186,6 @@ const searchOptions = new Map([
             this.panel.id = 'image-search-menu';
             this.panel.addEventListener('click', (event) => {
                 const action = event.target.dataset.action || false;
-                console.log(action);
                 if (action) {
                     switch (action) {
                         case 'ASCII2D':
@@ -206,7 +234,6 @@ const searchOptions = new Map([
                     item.dataset.action = key;
                     this.panel.append((item));
                 }
-                this.panel.style.minHeight = `calc(${this.panel.childNodes.length} * (1.5rem + 10px))`;
                 this.image = target;
                 this.update();
                 this.panel.classList.add('show');
@@ -230,89 +257,116 @@ const searchOptions = new Map([
             this.image = null;
             this.panel.classList.remove('show');
             this.panel.style.width = 0;
-            this.panel.style.height = 0;
             this.panel.style.left = 0;
             this.panel.style.top = 0;
         }
     }
 
     const searchMenu = new searchMenuController();
+
+    GM_registerMenuCommand('Setting', () => config.open());
+
+    const config = new GM_config({
+        'id': 'image-search-setting',
+        'css': `
+            #image-search-setting * {
+                box-sizing: border-box;
+            }
+            #image-search-setting {
+                box-sizing: border-box;
+                width: 100%;
+                height: 100%;
+                padding: 10px;
+                margin: 0;
+            }
+            #image-search-setting_wrapper {
+                display: flex;
+                flex-direction: column;
+                height: 100%;
+            }
+            #image-search-setting_buttons_holder {
+                text-align: center;
+                margin-top: auto;
+            }
+            .config_var {
+                margin: 5px 0 !important;
+            }
+            .field_label {
+                font-size: 14px !important;
+            }
+        `,
+        'title': 'Image Search Setting',
+        'fields': {
+            'GOOGLE_LENS': {
+                'type': 'checkbox',
+                'label': 'Google Lens',
+                'section': ['Search Options'],
+                'default': true,
+            },
+            'SAUCENAO': {
+                'type': 'checkbox',
+                'label': 'SauceNAO',
+                'default': true,
+            },
+            'ASCII2D': {
+                'type': 'checkbox',
+                'label': 'Ascii2D',
+                'default': true,
+            },
+            'IQDB': {
+                'type': 'checkbox',
+                'label': 'IQDB',
+                'default': true,
+            },
+            'TINEYE': {
+                'type': 'checkbox',
+                'label': 'TinEye',
+                'default': true,
+            },
+            'BAIDU': {
+                'type': 'checkbox',
+                'label': 'Baidu',
+                'default': true,
+            },
+            'BING': {
+                'type': 'checkbox',
+                'label': 'Bing',
+                'default': true,
+            },
+            'HOVER_OPEN': {
+                'type': 'checkbox',
+                'label': 'Enabled hover open',
+                'section': ['Hover images to open menu'],
+                'default': false,
+            },
+            'HOVER_OPEN_MIN_WIDTH': {
+                'label': 'Image min width (px)',
+                'type': 'int',
+                'default': 100,
+            },
+            'HOVER_OPEN_MIN_HEIGHT': {
+                'label': 'Image min height (px)',
+                'type': 'int',
+                'default': 100,
+            }
+        },
+        'events': {
+            'init': () => {
+                for (const [key] of searchOptions) { config.set(key, GM_getValue(key, true)) };
+                config.set('HOVER_OPEN', GM_getValue('HOVER_OPEN', false));
+                config.set('HOVER_OPEN_MIN_WIDTH', GM_getValue('HOVER_OPEN_MIN_WIDTH', 100));
+                config.set('HOVER_OPEN_MIN_HEIGHT', GM_getValue('HOVER_OPEN_MIN_HEIGHT', 100));
+            },
+            'save': () => {
+                for (const [key] of searchOptions) { GM_setValue(key, config.get(key)) };
+                GM_setValue('HOVER_OPEN', config.get('HOVER_OPEN'));
+                GM_setValue('HOVER_OPEN_MIN_WIDTH', config.get('HOVER_OPEN_MIN_WIDTH'));
+                GM_setValue('HOVER_OPEN_MIN_HEIGHT', config.get('HOVER_OPEN_MIN_HEIGHT'));
+                hoverOpen.enabled = config.get('HOVER_OPEN');
+                hoverOpen.minWidth = config.get('HOVER_OPEN_MIN_WIDTH');
+                hoverOpen.minHeight = config.get('HOVER_OPEN_MIN_HEIGHT');
+                config.close();
+            }
+        }
+    });
 })();
-
-GM_registerMenuCommand('Setting', () => config.open());
-
-const config = new GM_config({
-    'id': 'image-search-setting',
-    'css': `
-        #image-search-setting * {
-            box-sizing: border-box;
-        }
-        #image-search-setting {
-            box-sizing: border-box;
-            width: 100%;
-            height: 100%;
-            padding: 10px;
-            margin: 0;
-        }
-        #image-search-setting_buttons_holder {
-            text-align: center;
-        }
-        .config_var {
-            display: flex;
-            align-items: center;
-            flex-direction: row-reverse;
-            justify-content: start;
-        }
-    `,
-    'title': 'Search Options',
-    'fields': {
-        'GOOGLE_LENS': {
-            'label': 'Google Lens',
-            'type': 'checkbox',
-            'default': true,
-        },
-        'SAUCENAO': {
-            'label': 'SauceNAO',
-            'type': 'checkbox',
-            'default': true,
-        },
-        'ASCII2D': {
-            'label': 'Ascii2D',
-            'type': 'checkbox',
-            'default': true,
-        },
-        'IQDB': {
-            'label': 'IQDB',
-            'type': 'checkbox',
-            'default': true,
-        },
-        'TINEYE': {
-            'label': 'TinEye',
-            'type': 'checkbox',
-            'default': true,
-        },
-        'BAIDU': {
-            'label': 'Baidu',
-            'type': 'checkbox',
-            'default': true,
-        },
-        'BING': {
-            'label': 'Bing',
-            'type': 'checkbox',
-            'default': true,
-        }
-    },
-    'events': {
-        'init': () => {
-            for (const [key] of searchOptions) {
-                config.set(key, GM_getValue(key, true));
-            }
-        },
-        'save': () => {
-            for (const [key] of searchOptions) {
-                GM_setValue(key, config.get(key));
-            }
-            config.close();
-        }
-    }
-});
