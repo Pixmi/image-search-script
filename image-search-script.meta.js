@@ -12,6 +12,7 @@
 // @updateURL   https://github.com/Pixmi/image-search-script/raw/main/twitter-plus.meta.js
 // @downloadURL https://github.com/Pixmi/image-search-script/raw/main/twitter-plus.user.js
 // @supportURL  https://github.com/Pixmi/image-search-script/issues
+// @icon        https://raw.githubusercontent.com/Pixmi/image-search-script/refs/heads/main/icon.svg
 // @match       *://*/*
 // @require     https://openuserjs.org/src/libs/sizzle/GM_config.js
 // @grant       GM_setValue
