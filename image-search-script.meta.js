@@ -1,7 +1,5 @@
 // ==UserScript==
 // @name        Image Search Script
-// @name:zh-TW  圖片搜尋助手
-// @name:zh-CN  图片搜寻助手
 // @namespace   http://tampermonkey.net/
 // @version     0.0.6
 // @description Quickly access an intuitive and visually pleasing image search menu with a long right-click on any image.
