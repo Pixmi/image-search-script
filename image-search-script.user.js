@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name        Image Search Script
 // @namespace   http://tampermonkey.net/
-// @version     1.0.0
+// @version     1.0.1
 // @description Quickly access an intuitive and visually pleasing image search menu with a long right-click on any image.
 // @description:zh-TW 長按滑鼠右鍵，快速呼叫圖片搜尋選單，提供簡潔流暢的使用體驗。
 // @description:zh-CN 长按滑鼠右键，快速呼叫图片搜寻选单，提供简洁流畅的使用体验。
@@ -92,7 +92,7 @@ const searchOptions = new Map([
         label: 'Bing',
         key: 'BING',
         url: 'https://www.bing.com/images/searchbyimage?FORM=IRSBIQ&cbir=sbi&imgurl=%s'
-    }, 
+    }
 ].map(item => [item.key, item]));
 
 (function () {
@@ -103,7 +103,7 @@ const searchOptions = new Map([
         if (event.button === 2 && event.target.nodeName === 'IMG') {
             searchMenu.timer = setTimeout(() => {
                 searchMenu.holding = true;
-                searchMenu.open(event.originalTarget);
+                searchMenu.open(event.target);
             }, 500);
         } else {
             if (event.target !== searchMenu.pane && !event.target.classList.contains('image-search-option')) {
