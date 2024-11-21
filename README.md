@@ -1,3 +1,5 @@
+[繁體中文介紹](https://github.com/Pixmi/image-search-script/tree/main/i18n/zh-TW) | [簡體中文介紹](https://github.com/Pixmi/image-search-script/blob/main/i18n/zh-CN/README.md)
+
 # Image Search Script
 
 Long-pressing the right mouse button brings up the image search menu, offering a smooth and concise user experience.
