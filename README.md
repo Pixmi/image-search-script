@@ -4,7 +4,7 @@ Long-pressing the right mouse button brings up the image search menu, offering a
 
 ### Features Overview
 
-![Image Search Demo](/dist/demo.gif | width=350)
+![](/dist/demo.gif)
 
 - Embedded menu that does not interfere with the webpage layout.
 

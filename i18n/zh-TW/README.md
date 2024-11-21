@@ -4,7 +4,7 @@
 
 ### 功能概述
 
-![Image Search Demo](/dist/demo.gif | width=350)
+![](/dist/demo.gif)
 
 - 不干擾網頁佈局的嵌入式選單。
 
