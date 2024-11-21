@@ -111,13 +111,13 @@ const searchOptions = new Map([
         enabled: GM_getValue('HOVER_OPEN', false),
         minWidth: GM_getValue('HOVER_OPEN_MIN_WIDTH', 100),
         minHeight: GM_getValue('HOVER_OPEN_MIN_HEIGHT', 100)
-    }
+    };
 
     const newTab = (url) => {
         const tab = document.createElement('a');
         tab.href = url;
         tab.dispatchEvent(new MouseEvent('click', {ctrlKey: true, metaKey: true}));
-    }
+    };
 
     const hoverCheck = (event) => {
         const { target, relatedTarget } = event;
@@ -128,7 +128,7 @@ const searchOptions = new Map([
             return true;
         }
         return false;
-    }
+    };
 
     document.addEventListener('mouseover', (event) => {
         if (hoverOpen.enabled) {
@@ -178,8 +178,8 @@ const searchOptions = new Map([
         }
     });
 
-    document.addEventListener('scroll', () => { searchMenu.update() });
-    window.addEventListener('resize', () => { searchMenu.update() });
+    document.addEventListener('scroll', () => { searchMenu.update(); });
+    window.addEventListener('resize', () => { searchMenu.update(); });
 
     class searchMenuController {
         constructor() {
@@ -234,7 +234,7 @@ const searchOptions = new Map([
 
         open(target) {
             if (target.nodeName === 'IMG') {
-                while (this.panel.hasChildNodes()) { this.panel.lastChild.remove() };
+                while (this.panel.hasChildNodes()) { this.panel.lastChild.remove(); }
                 for (const [key, option] of searchOptions) {
                     if (!GM_getValue(key, true)) continue;
                     const item = document.createElement('div');
@@ -258,7 +258,7 @@ const searchOptions = new Map([
                 };
                 for (const key of Object.keys(status)) {
                     this.panel.style[key] = `${status[key]}px`;
-                };
+                }
             }
         }
 
@@ -361,13 +361,13 @@ const searchOptions = new Map([
         },
         'events': {
             'init': () => {
-                for (const [key] of searchOptions) { config.set(key, GM_getValue(key, true)) };
+                for (const [key] of searchOptions) { config.set(key, GM_getValue(key, true)); }
                 config.set('HOVER_OPEN', GM_getValue('HOVER_OPEN', false));
                 config.set('HOVER_OPEN_MIN_WIDTH', GM_getValue('HOVER_OPEN_MIN_WIDTH', 100));
                 config.set('HOVER_OPEN_MIN_HEIGHT', GM_getValue('HOVER_OPEN_MIN_HEIGHT', 100));
             },
             'save': () => {
-                for (const [key] of searchOptions) { GM_setValue(key, config.get(key)) };
+                for (const [key] of searchOptions) { GM_setValue(key, config.get(key)); }
                 GM_setValue('HOVER_OPEN', config.get('HOVER_OPEN'));
                 GM_setValue('HOVER_OPEN_MIN_WIDTH', config.get('HOVER_OPEN_MIN_WIDTH'));
                 GM_setValue('HOVER_OPEN_MIN_HEIGHT', config.get('HOVER_OPEN_MIN_HEIGHT'));
