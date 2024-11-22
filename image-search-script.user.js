@@ -2,8 +2,8 @@
 // @name        Image Search Script
 // @name:zh-TW  Image Search Script
 // @name:zh-CN  Image Search Script
-// @namespace   http://tampermonkey.net/
-// @version     1.1.6
+// @namespace   https://github.com/Pixmi/image-search-script
+// @version     1.1.7
 // @description Long-pressing the right mouse button brings up the image search menu, offering a smooth and concise user experience.
 // @description:zh-TW 長按滑鼠右鍵呼叫圖片搜尋選單，提供流暢且簡潔的使用體驗。
 // @description:zh-CN 长按滑鼠右键呼叫图片搜寻选单，提供流畅且简洁的使用体验。
@@ -80,7 +80,7 @@ const searchOptions = new Map([
     }, {
         label: 'SauceNAO',
         key: 'SAUCENAO',
-        url: 'https://saucenao.com/search.php?db=999&url=%s'
+        url: 'https://saucenao.com/search.php?url=%s'
     }, {
         label: 'Ascii2D',
         key: 'ASCII2D',

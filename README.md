@@ -4,9 +4,9 @@
 
 Long-pressing the right mouse button brings up the image search menu, offering a smooth and concise user experience.
 
-### Features Overview
-
 ![](/dist/demo.gif)
+
+### Features Overview
 
 - Embedded menu that does not interfere with the webpage layout.
 
