@@ -3,7 +3,7 @@
 // @name:zh-TW  Image Search Script
 // @name:zh-CN  Image Search Script
 // @namespace   https://github.com/Pixmi/image-search-script
-// @version     1.1.8
+// @version     1.1.9
 // @description Long-pressing the right mouse button brings up the image search menu, offering a smooth and concise user experience.
 // @description:zh-TW 長按滑鼠右鍵呼叫圖片搜尋選單，提供流暢且簡潔的使用體驗。
 // @description:zh-CN 长按滑鼠右键呼叫图片搜寻选单，提供流畅且简洁的使用体验。
@@ -12,15 +12,16 @@
 // @updateURL   https://github.com/Pixmi/image-search-script/raw/main/image-search-script.meta.js
 // @downloadURL https://github.com/Pixmi/image-search-script/raw/main/image-search-script.user.js
 // @supportURL  https://github.com/Pixmi/image-search-script/issues
-// @icon        https://raw.githubusercontent.com/Pixmi/image-search-script/main/icon.svg
+// @icon        https://github.com/Pixmi/image-search-script/raw/main/icon.svg
 // @match       *://*/*
 // @require     https://openuserjs.org/src/libs/sizzle/GM_config.js
-// @grant       GM_setValue
-// @grant       GM_getValue
 // @grant       GM_addStyle
+// @grant       GM_getValue
+// @grant       GM_setValue
 // @grant       GM_registerMenuCommand
 // @grant       GM_xmlhttpRequest
 // @grant       GM_openInTab
+// @grant       GM_notification
 // @connect     ascii2d.net
 // @license     GPL-3.0
 // @run-at      document-body
@@ -114,12 +115,6 @@ const searchOptions = new Map([
         minHeight: GM_getValue('HOVER_OPEN_MIN_HEIGHT', 100)
     };
 
-    const newTab = (url) => {
-        const tab = document.createElement('a');
-        tab.href = url;
-        tab.dispatchEvent(new MouseEvent('click', {ctrlKey: true, metaKey: true}));
-    };
-
     const hoverCheck = (event) => {
         const { target, relatedTarget } = event;
         if (target.className == 'image-search-option' && relatedTarget == searchMenu.image) {
@@ -129,6 +124,10 @@ const searchOptions = new Map([
             return true;
         }
         return false;
+    };
+
+    const notey = (text) => {
+        GM_notification(text, false, 'https://github.com/Pixmi/image-search-script/raw/main/icon.svg');
     };
 
     document.addEventListener('mouseover', (event) => {
@@ -209,14 +208,16 @@ const searchOptions = new Map([
                                 timeout: 10000,
                                 onload: function(response) {
                                     if (response.status == 200) {
-                                        newTab(response.finalUrl);
+                                        GM_openInTab(response.finalUrl, true);
+                                    } else {
+                                        notey('Ascii2D Response Error');
                                     }
                                 },
                                 onerror: function(error) {
-                                    console.error('請求錯誤:', error);
+                                    notey('Ascii2D Request Error');
                                 },
-                                ontimeout: function() {
-                                    console.error('請求超時');
+                                ontimeout: function(error) {
+                                    notey('Ascii2D Request Timeout');
                                 }
                             });
                             break;
