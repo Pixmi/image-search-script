@@ -10,11 +10,11 @@ Long-pressing the right mouse button brings up the image search menu, offering a
 
 - Embedded menu that does not interfere with the webpage layout.
 
-- Opens with a long right-click; the standard context menu remains unaffected.
+- Opens with long-pressing the right mouse button, while the standard context menu remains unaffected.
 
 - Tabs open in the background, ensuring a seamless browsing experience.
 
-- Search engine options can be enabled or disabled.
+- Select the search engine options of your choice.
 
     ![Image Search Setting](/dist/setting.png)
 
